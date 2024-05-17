@@ -11,10 +11,12 @@ builds:
   main: main.go
   env:
     - CGO_ENABLED=0
+  ldflags:
+      - -s -w -X github.com/pkgserver-dev/pkgctl/command.version={{.Version}} -X github.com/pkgserver-dev/pkgctl/command.commit={{.ShortCommit}} -X github.com/pkgserver-dev/pkgctl/command.date={{.Date}}
   goos:
     - darwin
-    #- freebsd
     - linux
+    #- freebsd
     #- openbsd
     #- windows
   goarch:
@@ -39,6 +41,7 @@ archives:
   # this name template makes the OS and Arch compatible with the results of `uname`.
   name_template: >-
     {{ .ProjectName }}_
+    {{ replace .Version "v" "" }}_
     {{ .Os }}_
     {{- if eq .Arch "amd64"}}aarch64
     {{- else }}{{ .Arch }}{{ end }}

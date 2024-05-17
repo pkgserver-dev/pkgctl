@@ -16,4 +16,34 @@ limitations under the License.
 
 package commands
 
-var version = "unknown"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
+
+var (
+	version = "0.0.0"
+	commit  = "none"
+	date    = "unknown"
+)
+
+const (
+	repoUrl = "https://github.com/pkgserver-dev/pkgctl"
+)
+
+// versionCmd represents the version command.
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "show pkctl version",
+
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Printf("    version: %s\n", version)
+		fmt.Printf("     commit: %s\n", commit)
+		fmt.Printf("       date: %s\n", date)
+		fmt.Printf("     source: %s\n", repoUrl)
+		fmt.Printf(" rel. notes: https://docs.pkgserver.dev/rn/%s\n", version)
+
+		return nil
+	},
+}
