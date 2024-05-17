@@ -94,7 +94,7 @@ func GetMain(ctx context.Context) *cobra.Command {
 	cmd.AddCommand(rpkgcmd.GetCommand(ctx, version, kubeflags))
 	cmd.AddCommand(secretcmd.GetCommand(ctx, version, kubeflags))
 	cmd.AddCommand(repocmd.GetCommand(ctx, version, kubeflags))
-	cmd.AddCommand(versionCmd)
+	cmd.AddCommand(GetVersionCommand(ctx))
 	//cmd.PersistentFlags().StringVar(&configFile, "config", "c", fmt.Sprintf("Default config file (%s/%s/%s.%s)", xdg.ConfigHome, defaultConfigFileSubDir, defaultConfigFileName, defaultConfigFileNameExt))
 
 	return cmd

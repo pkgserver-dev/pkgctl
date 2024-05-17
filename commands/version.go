@@ -17,7 +17,12 @@ limitations under the License.
 package commands
 
 import (
+	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/spf13/cobra"
 )
@@ -29,21 +34,76 @@ var (
 )
 
 const (
-	repoUrl = "https://github.com/pkgserver-dev/pkgctl"
+	repoUrl     = "https://github.com/pkgserver-dev/pkgctl"
+	downloadURL = "https://github.com/pkgserver-dev/pkgctl/raw/main/install.sh"
 )
 
-// versionCmd represents the version command.
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "show pkctl version",
+func GetVersionCommand(ctx context.Context) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "version",
+		Short: "show pkctl version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Printf("    version: %s\n", version)
+			fmt.Printf("     commit: %s\n", commit)
+			fmt.Printf("       date: %s\n", date)
+			fmt.Printf("     source: %s\n", repoUrl)
+			fmt.Printf(" rel. notes: https://docs.pkgserver.dev/rn/%s\n", version)
 
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Printf("    version: %s\n", version)
-		fmt.Printf("     commit: %s\n", commit)
-		fmt.Printf("       date: %s\n", date)
-		fmt.Printf("     source: %s\n", repoUrl)
-		fmt.Printf(" rel. notes: https://docs.pkgserver.dev/rn/%s\n", version)
+			return nil
+		},
+	}
 
-		return nil
-	},
+	cmd.AddCommand(GetVersionUpgradeCommand(ctx))
+	return cmd
+}
+
+func GetVersionUpgradeCommand(ctx context.Context) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "upgrade",
+		Short: "upgrade pkgctl to latest available version",
+		//PreRunE: sudoCheck,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			f, err := os.CreateTemp("", "pkgctl")
+			defer os.Remove(f.Name())
+			if err != nil {
+				return fmt.Errorf("failed to create temp file: %w", err)
+			}
+			_ = downloadFile(downloadURL, f)
+
+			c := exec.Command("bash", f.Name())
+			// pass the environment variables to the upgrade script
+			// so that GITHUB_TOKEN is available
+			c.Env = os.Environ()
+
+			c.Stdout = os.Stdout
+			c.Stderr = os.Stderr
+			err = c.Run()
+			if err != nil {
+				return fmt.Errorf("upgrade failed: %w", err)
+			}
+
+			return nil
+		},
+	}
+
+	cmd.AddCommand()
+	return cmd
+}
+
+// downloadFile will download a file from a URL and write its content to a file.
+func downloadFile(url string, file *os.File) error {
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Write the body to file
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
