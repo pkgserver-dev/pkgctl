@@ -18,14 +18,14 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: v1.38
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVER }}
       - run: go test -cover ./...
         env:
           CGO_ENABLED: 0
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.38
       # run staticcheck
