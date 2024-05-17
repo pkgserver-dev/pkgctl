@@ -12,7 +12,7 @@ builds:
   env:
     - CGO_ENABLED=0
   ldflags:
-      - -s -w -X github.com/pkgserver-dev/pkgctl/command.version={{.Version}} -X github.com/pkgserver-dev/pkgctl/command.commit={{.ShortCommit}} -X github.com/pkgserver-dev/pkgctl/command.date={{.Date}}
+      - -s -w -X github.com/pkgserver-dev/pkgctl/commands.version={{.Version}} -X github.com/pkgserver-dev/pkgctl/commands.commit={{.ShortCommit}} -X github.com/pkgserver-dev/pkgctl/commands.date={{.Date}}
   goos:
     - darwin
     - linux
