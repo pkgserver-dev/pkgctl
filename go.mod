@@ -9,7 +9,7 @@ require (
 	github.com/henderiw/logger v0.0.0-20230911123436-8655829b1abe
 	github.com/henderiw/store v0.0.0-20240513051819-0202d08d7b42
 	github.com/kform-dev/kform v0.0.6-0.20240516195352-1c8f39854c83
-	github.com/pkgserver-dev/pkgserver v0.0.2-0.20240517040459-cb6e8bcc776c
+	github.com/pkgserver-dev/pkgserver v0.0.4
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	k8s.io/apimachinery v0.30.1
